@@ -1,35 +1,78 @@
+import React, { useState } from 'react';
+import { Navbar } from './components/Navbar';
+import { Notification } from './components/Notification';
+import { DashboardPage } from './pages/DashboardPage';
+import { ProductsPage } from './pages/ProductsPage';
+import { ProductDetailsPage } from './pages/ProductDetailsPage';
+import { PlansPage } from './pages/PlansPage';
+import { TaxesPage } from './pages/TaxesPage';
+
 function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [planFilterProductId, setPlanFilterProductId] = useState(null);
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (type, message) => {
+    setNotification({ type, message });
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab !== 'plans') {
+      setPlanFilterProductId(null);
+    }
+  };
+
+  const handleSelectProduct = (productId) => {
+    setSelectedProductId(productId);
+    setActiveTab('product-details');
+  };
+
+  const handleNavigateToPlans = (productId) => {
+    setPlanFilterProductId(productId);
+    setActiveTab('plans');
+  };
+
   return (
-    <main className="page">
-      <header className="topbar">
-        <div className="brand">Brightloop</div>
-        <span className="tag">Subscription Management</span>
-      </header>
+    <div className="app-layout">
+      <Navbar activeTab={activeTab === 'product-details' ? 'products' : activeTab} onSelectTab={handleTabChange} />
 
-      <section className="welcome">
-        <p className="eyebrow">BRIGHTLOOP SOFTWARE</p>
-        <h1>Subscription Management System</h1>
-        <p>
-          Starter workspace is ready. Dashboard cards, navigation and module
-          pages will be added as the team implements the requirements.
-        </p>
-      </section>
+      <main className="page">
+        <Notification notification={notification} onClose={() => setNotification(null)} />
 
-      <section className="grid" aria-label="Application modules">
-        {[
-          ["Products & Plans", "Manage products, variants, prices and plans."],
-          ["Subscriptions", "Create quotations and track subscription status."],
-          ["Invoices & Payments", "Generate invoices and record payments."],
-          ["Reports", "Review recurring revenue and outstanding invoices."]
-        ].map(([title, description]) => (
-          <article className="module-card" key={title}>
-            <h2>{title}</h2>
-            <p>{description}</p>
-            <span>Coming soon</span>
-          </article>
-        ))}
-      </section>
-    </main>
+        {activeTab === 'dashboard' && (
+          <DashboardPage onNavigate={handleTabChange} />
+        )}
+
+        {activeTab === 'products' && (
+          <ProductsPage
+            onSelectProduct={handleSelectProduct}
+            onShowNotification={showNotification}
+          />
+        )}
+
+        {activeTab === 'product-details' && selectedProductId && (
+          <ProductDetailsPage
+            productId={selectedProductId}
+            onBack={() => setActiveTab('products')}
+            onNavigateToPlans={handleNavigateToPlans}
+            onShowNotification={showNotification}
+          />
+        )}
+
+        {activeTab === 'plans' && (
+          <PlansPage
+            initialProductId={planFilterProductId}
+            onShowNotification={showNotification}
+          />
+        )}
+
+        {activeTab === 'taxes' && (
+          <TaxesPage onShowNotification={showNotification} />
+        )}
+      </main>
+    </div>
   );
 }
 
