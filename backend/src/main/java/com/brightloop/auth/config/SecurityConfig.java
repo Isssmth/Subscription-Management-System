@@ -74,8 +74,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/staff").hasRole("ADMIN")
-                        // Everything else requires a valid token. Other modules should refine
-                        // this with their own role rules (e.g. hasAnyRole("ADMIN", "STAFF")).
+                        .requestMatchers(
+                                "/api/products/**",
+                                "/api/plans/**",
+                                "/api/taxes/**",
+                                "/api/variants/**",
+                                "/api/quotations/**",
+                                "/api/subscriptions/**",
+                                "/api/invoices/**"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, e) ->
