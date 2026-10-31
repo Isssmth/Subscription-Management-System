@@ -1,6 +1,6 @@
 -- Brightloop database starter.
 -- Create the database before running this file:
--- CREATE DATABASE brightloop;
+CREATE DATABASE IF NOT EXISTS brightloop;
 USE brightloop;
 
 -- Products Table
