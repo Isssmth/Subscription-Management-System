@@ -1,5 +1,7 @@
 package com.brightloop.auth.entity;
 
-public class Role {
-    
+public enum Role {
+    ADMIN,
+    STAFF,
+    CUSTOMER
 }
